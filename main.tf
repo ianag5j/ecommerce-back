@@ -18,7 +18,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "lambda_bucket" {
-  bucket = "ianag5j-hello-world-terraform"
+  bucket = "ianag5j-ecommerce-back"
 }
 
 resource "aws_s3_bucket_acl" "bucket_acl" {
@@ -36,7 +36,7 @@ data "archive_file" "lambda_hello_world" {
 resource "aws_s3_object" "lambda_hello_world" {
   bucket = aws_s3_bucket.lambda_bucket.id
 
-  key    = "hello-world.zip"
+  key    = "${terraform.workspace}/hello-world.zip"
   source = data.archive_file.lambda_hello_world.output_path
 
   etag = filemd5(data.archive_file.lambda_hello_world.output_path)
@@ -45,7 +45,7 @@ resource "aws_s3_object" "lambda_hello_world" {
 # ------------------
 
 resource "aws_lambda_function" "hello_world" {
-  function_name = "HelloWorld"
+  function_name = "${terraform.workspace}HelloWorld"
 
   s3_bucket = aws_s3_bucket.lambda_bucket.id
   s3_key    = aws_s3_object.lambda_hello_world.key
@@ -65,7 +65,7 @@ resource "aws_cloudwatch_log_group" "hello_world" {
 }
 
 resource "aws_iam_role" "lambda_exec" {
-  name = "serverless_lambda"
+  name = "${terraform.workspace}_serverless_lambda"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -89,7 +89,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
 # --------
 
 resource "aws_apigatewayv2_api" "lambda" {
-  name          = "serverless_lambda_gw"
+  name          = "${terraform.workspace}_serverless_lambda_gw"
   protocol_type = "HTTP"
 }
 
