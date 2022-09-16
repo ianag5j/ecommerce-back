@@ -6,10 +6,10 @@ output "lambda_bucket_name" {
   value = aws_s3_bucket.lambda_bucket.id
 }
 
-output "function_name" {
+output "function_name_saveCredentials" {
   description = "Name of the Lambda function."
 
-  value = aws_lambda_function.hello_world.function_name
+  value = aws_lambda_function.saveCredentials.function_name
 }
 
 output "base_url" {

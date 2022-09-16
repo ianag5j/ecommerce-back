@@ -4,7 +4,7 @@ const jwt_decode = require('jwt-decode');
 
 const docClient = new AWS.DynamoDB.DocumentClient();
 
-module.exports.handler = async (event) => {
+module.exports.saveCredentials = async (event) => {
   console.log('Event: ', event);
   try {
     const accessToken = event.headers.authorization.replace('Bearer ', '');

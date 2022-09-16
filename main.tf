@@ -42,16 +42,17 @@ resource "aws_s3_object" "lambda_hello_world" {
   etag = filemd5(data.archive_file.lambda_hello_world.output_path)
 }
 
-# ------------------
+# ############ LAMBDA ############
 
-resource "aws_lambda_function" "hello_world" {
-  function_name = "${terraform.workspace}HelloWorld"
+# ----- saveCredentials -----
+resource "aws_lambda_function" "saveCredentials" {
+  function_name = "${terraform.workspace}SaveCredentials"
 
   s3_bucket = aws_s3_bucket.lambda_bucket.id
   s3_key    = aws_s3_object.lambda_hello_world.key
 
   runtime = "nodejs14.x"
-  handler = "handler.handler"
+  handler = "handler.saveCredentials"
 
   source_code_hash = data.archive_file.lambda_hello_world.output_base64sha256
 
@@ -64,7 +65,7 @@ resource "aws_lambda_function" "hello_world" {
 }
 
 resource "aws_cloudwatch_log_group" "hello_world" {
-  name = "/aws/lambda/${aws_lambda_function.hello_world.function_name}"
+  name = "/aws/lambda/${aws_lambda_function.saveCredentials.function_name}"
 
   retention_in_days = 30
 }
@@ -143,7 +144,7 @@ resource "aws_apigatewayv2_stage" "lambda" {
 resource "aws_apigatewayv2_integration" "hello_world" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  integration_uri    = aws_lambda_function.hello_world.invoke_arn
+  integration_uri    = aws_lambda_function.saveCredentials.invoke_arn
   integration_type   = "AWS_PROXY"
   integration_method = "POST"
 }
@@ -176,7 +177,7 @@ resource "aws_cloudwatch_log_group" "api_gw" {
 resource "aws_lambda_permission" "api_gw" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.hello_world.function_name
+  function_name = aws_lambda_function.saveCredentials.function_name
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
