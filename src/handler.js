@@ -8,14 +8,13 @@ module.exports.handler = async (event) => {
   console.log('Event: ', event);
   try {
     const accessToken = event.headers.authorization.replace('Bearer ', '');
-    const decodedHeader = jwt_decode(accessToken, { header: true });
-    console.log('DecodedHeader: ', decodedHeader);
+    const decodedToken = jwt_decode(accessToken);
     const body = JSON.parse(event.body)
     const Item = {
-      UserId: body.userId,
+      UserId: decodedToken.sub,
       Provider: 'Uala',
-      externalClientId: body.clientId,
-      externalClientSecret: body.clientSecret,
+      externalClientId: body.externalClientId,
+      externalClientSecret: body.externalClientSecret,
       externalUserName: body.externalUserName
   }
   const params = {
