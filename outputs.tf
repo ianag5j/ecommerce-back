@@ -17,3 +17,15 @@ output "base_url" {
 
   value = aws_apigatewayv2_stage.lambda.invoke_url
 }
+
+output "dynamodb_table" {
+  description = "Dynamo Table."
+
+  value = aws_dynamodb_table.basic-dynamodb-table.name
+}
+
+output "api_id" {
+  description = "Api Id."
+
+  value = aws_apigatewayv2_api.lambda.id
+}

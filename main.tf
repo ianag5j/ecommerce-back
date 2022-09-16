@@ -56,6 +56,11 @@ resource "aws_lambda_function" "hello_world" {
   source_code_hash = data.archive_file.lambda_hello_world.output_base64sha256
 
   role = aws_iam_role.lambda_exec.arn
+  environment {
+    variables = {
+      CREDENTIALS_TABLE = aws_dynamodb_table.basic-dynamodb-table.name
+    }
+  }
 }
 
 resource "aws_cloudwatch_log_group" "hello_world" {
@@ -64,9 +69,26 @@ resource "aws_cloudwatch_log_group" "hello_world" {
   retention_in_days = 30
 }
 
-resource "aws_iam_role" "lambda_exec" {
-  name = "${terraform.workspace}_serverless_lambda"
+resource "aws_iam_role_policy" "lambda_policy" {
+  name = "lambda_policy"
+  role = aws_iam_role.lambda_exec.id
 
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [{
+      Effect = "Allow",
+      Action = [
+        "dynamodb:*",
+      ],
+      Resource = "arn:aws:dynamodb:us-east-1:197373923794:table/${terraform.workspace}Credentials"
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role" "lambda_exec" {
+  name                  = "${terraform.workspace}_serverless_lambda"
+  force_detach_policies = true
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
@@ -86,7 +108,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-# --------
+# ############ API GATEWAY ############
 
 resource "aws_apigatewayv2_api" "lambda" {
   name          = "${terraform.workspace}_serverless_lambda_gw"
@@ -129,9 +151,21 @@ resource "aws_apigatewayv2_integration" "hello_world" {
 resource "aws_apigatewayv2_route" "hello_world" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  route_key = "GET /hello"
+  route_key = "POST /credentials"
   target    = "integrations/${aws_apigatewayv2_integration.hello_world.id}"
 }
+
+# resource "aws_apigatewayv2_authorizer" "authorizer" {
+#   api_id           = aws_apigatewayv2_api.lambda.id
+#   authorizer_type  = "JWT"
+#   identity_sources = ["$request.header.Authorization"]
+#   name             = "${terraform.workspace}EcommerceAuthorizer"
+
+#   jwt_configuration {
+#     audience = ["example"]
+#     issuer   = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Bi6FQeFqv"
+#   }
+# }
 
 resource "aws_cloudwatch_log_group" "api_gw" {
   name = "/aws/api_gw/${aws_apigatewayv2_api.lambda.name}"
@@ -146,4 +180,29 @@ resource "aws_lambda_permission" "api_gw" {
   principal     = "apigateway.amazonaws.com"
 
   source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
+}
+
+# ############ DYNAMODB ############
+resource "aws_dynamodb_table" "basic-dynamodb-table" {
+  name           = "${terraform.workspace}Credentials"
+  billing_mode   = "PROVISIONED"
+  read_capacity  = 20
+  write_capacity = 20
+  hash_key       = "UserId"
+  range_key      = "Provider"
+
+  attribute {
+    name = "UserId"
+    type = "S"
+  }
+
+  attribute {
+    name = "Provider"
+    type = "S"
+  }
+
+  tags = {
+    Name        = "dynamodb-credentials-table"
+    Environment = terraform.workspace
+  }
 }
