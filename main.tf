@@ -52,7 +52,7 @@ resource "aws_lambda_function" "saveCredentials" {
   s3_key    = aws_s3_object.lambda_hello_world.key
 
   runtime = "nodejs14.x"
-  handler = "handler.saveCredentials"
+  handler = "credentials.saveCredentials"
 
   source_code_hash = data.archive_file.lambda_hello_world.output_base64sha256
 

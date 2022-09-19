@@ -7,7 +7,7 @@ resource "aws_lambda_function" "getCredentials" {
   s3_key    = aws_s3_object.lambda_hello_world.key
 
   runtime = "nodejs14.x"
-  handler = "handler.getCredentials"
+  handler = "credentials.getCredentials"
 
   source_code_hash = data.archive_file.lambda_hello_world.output_base64sha256
 
