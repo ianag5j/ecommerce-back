@@ -88,6 +88,8 @@ resource "aws_apigatewayv2_integration" "getProducts" {
 resource "aws_apigatewayv2_route" "getProducts" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  route_key = "GET /products"
-  target    = "integrations/${aws_apigatewayv2_integration.getProducts.id}"
+  route_key          = "GET /products"
+  target             = "integrations/${aws_apigatewayv2_integration.getProducts.id}"
+  authorizer_id      = aws_apigatewayv2_authorizer.authorizer.id
+  authorization_type = "JWT"
 }

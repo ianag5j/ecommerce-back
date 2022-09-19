@@ -108,6 +108,14 @@ resource "aws_iam_role" "lambda_exec" {
         Principal = {
           Service = "lambda.amazonaws.com"
         }
+      },
+      {
+        Action = "sts:AssumeRole",
+        Effect = "Allow",
+        Sid    = ""
+        Principal = {
+          Service = "apigateway.amazonaws.com"
+        },
       }
     ]
   })
@@ -158,24 +166,28 @@ resource "aws_apigatewayv2_integration" "hello_world" {
   integration_method = "POST"
 }
 
+resource "aws_apigatewayv2_authorizer" "authorizer" {
+  api_id           = aws_apigatewayv2_api.lambda.id
+  authorizer_type  = "JWT"
+  identity_sources = ["$request.header.Authorization"]
+  name             = "ecommerce-authorizer"
+
+  jwt_configuration {
+    audience = ["34i1j18acnv0hqqsiarlfnjj6k"]
+    issuer   = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Bi6FQeFqv"
+  }
+}
+
 resource "aws_apigatewayv2_route" "hello_world" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  route_key = "POST /credentials"
-  target    = "integrations/${aws_apigatewayv2_integration.hello_world.id}"
+  route_key          = "POST /credentials"
+  target             = "integrations/${aws_apigatewayv2_integration.hello_world.id}"
+  authorizer_id      = aws_apigatewayv2_authorizer.authorizer.id
+  authorization_type = "JWT"
 }
 
-# resource "aws_apigatewayv2_authorizer" "authorizer" {
-#   api_id           = aws_apigatewayv2_api.lambda.id
-#   authorizer_type  = "JWT"
-#   identity_sources = ["$request.header.Authorization"]
-#   name             = "${terraform.workspace}EcommerceAuthorizer"
 
-#   jwt_configuration {
-#     audience = ["example"]
-#     issuer   = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Bi6FQeFqv"
-#   }
-# }
 
 resource "aws_cloudwatch_log_group" "api_gw" {
   name = "/aws/api_gw/${aws_apigatewayv2_api.lambda.name}"

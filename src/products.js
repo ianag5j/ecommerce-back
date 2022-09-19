@@ -34,7 +34,7 @@ module.exports.getProducts = async (event) => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ error }),
+      body: JSON.stringify({ error, message: error.message }),
     }
   }
 }

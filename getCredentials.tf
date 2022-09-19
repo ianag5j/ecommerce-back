@@ -36,8 +36,10 @@ resource "aws_apigatewayv2_integration" "getCredentials" {
 resource "aws_apigatewayv2_route" "getCredentials" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  route_key = "GET /credentials"
-  target    = "integrations/${aws_apigatewayv2_integration.getCredentials.id}"
+  route_key          = "GET /credentials"
+  target             = "integrations/${aws_apigatewayv2_integration.getCredentials.id}"
+  authorizer_id      = aws_apigatewayv2_authorizer.authorizer.id
+  authorization_type = "JWT"
 }
 
 resource "aws_lambda_permission" "api_gw_get_credentials" {
