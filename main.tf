@@ -112,7 +112,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
 # ############ API GATEWAY ############
 
 resource "aws_apigatewayv2_api" "lambda" {
-  name          = "${terraform.workspace}_serverless_lambda_gw"
+  name          = "${terraform.workspace}_ecommerce"
   protocol_type = "HTTP"
 }
 

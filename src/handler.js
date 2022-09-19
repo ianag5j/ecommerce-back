@@ -41,3 +41,36 @@ module.exports.saveCredentials = async (event) => {
     }
   }
 }
+
+module.exports.getCredentials = async (event) => {
+  console.log('Event: ', event);
+  try {
+    const accessToken = event.headers.authorization.replace('Bearer ', '');
+    const decodedToken = jwt_decode(accessToken);
+    const params = {
+      TableName: process.env.CREDENTIALS_TABLE,
+      Key: {
+        UserId: decodedToken.sub,
+        Provider: event.queryStringParameters.provider,
+      }
+    }
+  console.log(params);
+  const { Item } = await docClient.get(params).promise()
+  return {
+    statusCode: 200,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ credentials: Item }),
+  }
+  } catch (error) {
+    console.log(error);
+    return {
+      statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ error }),
+    }
+  }
+}
