@@ -76,13 +76,21 @@ resource "aws_iam_role_policy" "lambda_policy" {
 
   policy = jsonencode({
     Version = "2012-10-17",
-    Statement = [{
-      Effect = "Allow",
-      Action = [
-        "dynamodb:*",
-      ],
-      Resource = "arn:aws:dynamodb:us-east-1:197373923794:table/${terraform.workspace}Credentials"
-      }
+    Statement = [
+      {
+        Effect = "Allow",
+        Action = [
+          "dynamodb:*",
+        ],
+        Resource = "arn:aws:dynamodb:us-east-1:197373923794:table/${terraform.workspace}Credentials"
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "dynamodb:*",
+        ],
+        Resource = "arn:aws:dynamodb:${var.aws_region}:197373923794:table/${aws_dynamodb_table.products-dynamodb-table.name}/*"
+      },
     ]
   })
 }
@@ -92,13 +100,14 @@ resource "aws_iam_role" "lambda_exec" {
   force_detach_policies = true
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
-    Statement = [{
-      Action = "sts:AssumeRole"
-      Effect = "Allow"
-      Sid    = ""
-      Principal = {
-        Service = "lambda.amazonaws.com"
-      }
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Sid    = ""
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
       }
     ]
   })
