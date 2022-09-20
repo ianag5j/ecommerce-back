@@ -5,17 +5,12 @@ resource "aws_dynamodb_table" "products-dynamodb-table" {
   read_capacity  = 20
   write_capacity = 20
   hash_key       = "Id"
-  range_key      = "Name"
 
   attribute {
     name = "Id"
     type = "S"
   }
 
-  attribute {
-    name = "Name"
-    type = "S"
-  }
 
   attribute {
     name = "UserId"
@@ -28,7 +23,7 @@ resource "aws_dynamodb_table" "products-dynamodb-table" {
     write_capacity     = 10
     read_capacity      = 10
     projection_type    = "INCLUDE"
-    non_key_attributes = ["Id", "Name"]
+    non_key_attributes = ["Id", "Name", "Price"]
   }
 
 

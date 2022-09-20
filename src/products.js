@@ -1,5 +1,5 @@
 const jwt_decode = require('jwt-decode');
-const { DynamoDBClient, QueryCommand, PutItemCommand } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBClient, QueryCommand, PutItemCommand, GetItemCommand } = require('@aws-sdk/client-dynamodb');
 const { v4 } = require('uuid');
 
 const docClient = new DynamoDBClient();
@@ -18,8 +18,8 @@ module.exports.getProducts = async (event) => {
       },
       Select: "ALL_PROJECTED_ATTRIBUTES",
     }))
-
-    const products = Items.map(({Name, Id}) => ({name: Name.S, id: Id.S}))
+    console.log('Items: ', Items);
+    const products = Items.map(({Name, Id, Price}) => ({name: Name.S, id: Id.S, price: Price.S}))
     return {
       statusCode: 200,
       headers: {
@@ -69,6 +69,35 @@ module.exports.createProduct = async (event) => {
     console.log(error);
     return {
       statusCode: 500,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ error, message: error.message }),
+    }
+  }
+}
+
+module.exports.getProduct = async (event) => {
+  console.log('event: ', event);
+  try {
+    const productId = event.pathParameters.id
+    const {Item: product} = await docClient.send(new GetItemCommand({
+      TableName: process.env.PRODUCTS_TABLE,
+      Key: {
+        Id: {S: productId}
+      }
+    }))
+    return {
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ product }),
+    }
+  } catch (error) {
+    console.log(error);
+    return {
+      statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
       },
