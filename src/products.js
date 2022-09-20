@@ -44,21 +44,26 @@ module.exports.createProduct = async (event) => {
     const accessToken = event.headers.authorization.replace('Bearer ', '');
     const decodedToken = jwt_decode(accessToken);
     const body = JSON.parse(event.body)
-    const { Items } = await  docClient.send(new PutItemCommand({
+    const Item = {
+      Id: {S: v4()},
+      Name: {S: body.name},
+      UserId: {S: decodedToken.sub},
+      Price: {S: body.price}
+    }
+    console.log({
       TableName: process.env.PRODUCTS_TABLE,
-      Item: {
-        Id: v4(),
-        Name: body.name,
-        UserId: decodedToken.sub,
-        Price: body.price
-      }
+      Item
+    });
+    await  docClient.send(new PutItemCommand({
+      TableName: process.env.PRODUCTS_TABLE,
+      Item
     }))
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ Items }),
+      body: JSON.stringify({ Item }),
     }
   } catch (error) {
     console.log(error);

@@ -1,13 +1,13 @@
 # ############ LAMBDA ############
 
 resource "aws_lambda_function" "saveProduct" {
-  function_name = "${terraform.workspace}saveProduct"
+  function_name = "${terraform.workspace}SaveProduct"
 
   s3_bucket = aws_s3_bucket.lambda_bucket.id
   s3_key    = aws_s3_object.lambda_hello_world.key
 
   runtime = "nodejs14.x"
-  handler = "products.saveProduct"
+  handler = "products.createProduct"
 
   source_code_hash = data.archive_file.lambda_hello_world.output_base64sha256
 
@@ -47,7 +47,7 @@ resource "aws_apigatewayv2_integration" "saveProduct" {
 resource "aws_apigatewayv2_route" "saveProduct" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  route_key          = "Post /product"
+  route_key          = "POST /products"
   target             = "integrations/${aws_apigatewayv2_integration.saveProduct.id}"
   authorizer_id      = aws_apigatewayv2_authorizer.authorizer.id
   authorization_type = "JWT"

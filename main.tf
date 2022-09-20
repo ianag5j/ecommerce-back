@@ -89,7 +89,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Action = [
           "dynamodb:*",
         ],
-        Resource = "arn:aws:dynamodb:${var.aws_region}:197373923794:table/${aws_dynamodb_table.products-dynamodb-table.name}/*"
+        Resource = "arn:aws:dynamodb:${var.aws_region}:197373923794:table/${aws_dynamodb_table.products-dynamodb-table.name}*"
       },
     ]
   })
