@@ -27,7 +27,7 @@ resource "aws_dynamodb_table" "orders-dynamodb-table" {
     write_capacity     = 10
     read_capacity      = 10
     projection_type    = "INCLUDE"
-    non_key_attributes = ["Id", "Status", "Amount", "ExternalId"]
+    non_key_attributes = ["Id", "Status", "Amount", "ExternalId", "CreatedAt"]
   }
 
   global_secondary_index {
