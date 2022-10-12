@@ -3,6 +3,7 @@ const {
   DynamoDBClient, PutItemCommand, UpdateItemCommand, QueryCommand,
 } = require('@aws-sdk/client-dynamodb');
 const { v4 } = require('uuid');
+const { getProductsByIds, getTotalAmount } = require('./services/products');
 
 const docClient = new DynamoDBClient();
 
@@ -11,14 +12,17 @@ module.exports.createOrder = async (event) => {
     const accessToken = event.headers.authorization.replace('Bearer ', '');
     const decodedToken = jwtDecode(accessToken);
     const body = JSON.parse(event.body);
+    const products = await getProductsByIds(body.cart.map((item) => item.id));
+    const totalAmount = getTotalAmount(body.cart, products);
     const Item = {
       Id: { S: v4() },
       UserId: { S: decodedToken.sub },
-      // ExternalId: { S: body.externalId },
       Status: { S: 'CREATED' },
-      Amount: { S: body.amount },
+      Amount: { S: totalAmount },
       CreatedAt: { S: (new Date()).toISOString() },
       UpdatedAt: { S: (new Date()).toISOString() },
+      // Cart: { L: body.cart.map((item) => ({ M: item })) },
+      // Products: { L: products },
     };
     console.log('Item: ', Item);
     await docClient.send(new PutItemCommand({
