@@ -1,10 +1,8 @@
 # ############ DYNAMODB ############
 resource "aws_dynamodb_table" "products-dynamodb-table" {
-  name           = "${terraform.workspace}Products"
-  billing_mode   = "PROVISIONED"
-  read_capacity  = 20
-  write_capacity = 20
-  hash_key       = "Id"
+  name         = "${terraform.workspace}Products"
+  billing_mode = "PAY_PER_REQUEST"
+  hash_key     = "Id"
 
   attribute {
     name = "Id"
