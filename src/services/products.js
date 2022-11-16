@@ -1,4 +1,4 @@
-const { DynamoDBClient, GetItemCommand } = require('@aws-sdk/client-dynamodb');
+const { DynamoDBClient, GetItemCommand, QueryCommand } = require('@aws-sdk/client-dynamodb');
 const formatItem = require('../lib/formatItem');
 
 const docClient = new DynamoDBClient();
@@ -24,4 +24,20 @@ module.exports.getTotalAmount = (cart, products) => {
     totalAmount += item.cant * currentProduct.Price;
   });
   return totalAmount.toPrecision(3);
+};
+
+module.exports.getProductsByUserId = async (userId) => {
+  const { Items } = await docClient.send(new QueryCommand({
+    TableName: process.env.PRODUCTS_TABLE,
+    IndexName: 'UserIdIndex',
+    KeyConditionExpression: 'UserId = :userId',
+    ExpressionAttributeValues: {
+      ':userId': { S: userId },
+    },
+    Select: 'ALL_PROJECTED_ATTRIBUTES',
+  }));
+  const products = Items.map(({ Name, Id, Price }) => ({
+    name: Name.S, id: Id.S, price: Price.S,
+  }));
+  return products;
 };
