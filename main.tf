@@ -150,7 +150,7 @@ resource "aws_apigatewayv2_api" "lambda" {
 resource "aws_apigatewayv2_stage" "lambda" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  name        = "serverless_lambda_stage"
+  name        = terraform.workspace
   auto_deploy = true
 
   access_log_settings {
@@ -192,6 +192,15 @@ resource "aws_apigatewayv2_authorizer" "authorizer" {
   }
 }
 
+resource "aws_apigatewayv2_authorizer" "customAuthorizer" {
+  api_id           = aws_apigatewayv2_api.lambda.id
+  authorizer_payload_format_version= "2.0"
+  authorizer_uri= aws_lambda_function.authorizer.invoke_arn
+  authorizer_type  = "REQUEST"
+  identity_sources = ["$request.header.Authorization"]
+  name             = "ecommerce-custom-authorizer"
+}
+
 resource "aws_apigatewayv2_route" "hello_world" {
   api_id = aws_apigatewayv2_api.lambda.id
 
@@ -200,8 +209,6 @@ resource "aws_apigatewayv2_route" "hello_world" {
   authorizer_id      = aws_apigatewayv2_authorizer.authorizer.id
   authorization_type = "JWT"
 }
-
-
 
 resource "aws_cloudwatch_log_group" "api_gw" {
   name = "/aws/api_gw/${aws_apigatewayv2_api.lambda.name}"
