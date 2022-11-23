@@ -108,7 +108,6 @@ module.exports.getOrders = async (event) => {
   try {
     const accessToken = event.headers.authorization.replace('Bearer ', '');
     const decodedToken = jwtDecode(accessToken);
-
     const { Items } = await docClient.send(new QueryCommand({
       TableName: process.env.ORDERS_TABLE,
       IndexName: 'UserIdIndex',

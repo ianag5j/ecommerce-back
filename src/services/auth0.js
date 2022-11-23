@@ -2,7 +2,6 @@ const jwksClient = require('jwks-rsa');
 const jwt = require('jsonwebtoken');
 const util = require('util');
 
-process.env.AUTH0_DOMAIN = 'https://dev-7yp156lleklcumhn.us.auth0.com/';
 const client = jwksClient({
   cache: true,
   rateLimit: true,
