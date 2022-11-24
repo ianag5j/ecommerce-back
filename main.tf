@@ -166,7 +166,9 @@ resource "aws_apigatewayv2_stage" "lambda" {
       routeKey                = "$context.routeKey"
       status                  = "$context.status"
       responseLength          = "$context.responseLength"
-      integrationErrorMessage = "$context.integrationErrorMessage"
+      integrationErrorMessage = "$context.integrationErrorMessage",
+      authError = "$context.authorizer.error",
+      authProperty = "$context.authorizer.scope",
       }
     )
   }
@@ -192,22 +194,13 @@ resource "aws_apigatewayv2_authorizer" "authorizer" {
   }
 }
 
-resource "aws_apigatewayv2_authorizer" "customAuthorizer" {
-  api_id           = aws_apigatewayv2_api.lambda.id
-  authorizer_payload_format_version= "2.0"
-  authorizer_uri= aws_lambda_function.authorizer.invoke_arn
-  authorizer_type  = "REQUEST"
-  identity_sources = ["$request.header.Authorization"]
-  name             = "ecommerce-custom-authorizer"
-}
-
 resource "aws_apigatewayv2_route" "hello_world" {
   api_id = aws_apigatewayv2_api.lambda.id
 
   route_key          = "POST /credentials"
   target             = "integrations/${aws_apigatewayv2_integration.hello_world.id}"
-  authorizer_id      = aws_apigatewayv2_authorizer.authorizer.id
-  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.customAuthorizer.id
+  authorization_type = "CUSTOM"
 }
 
 resource "aws_cloudwatch_log_group" "api_gw" {

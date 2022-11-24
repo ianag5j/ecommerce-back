@@ -24,3 +24,15 @@ resource "aws_cloudwatch_log_group" "authorizer" {
 
   retention_in_days = 30
 }
+
+# ############ API GATEWAY ############
+
+resource "aws_apigatewayv2_authorizer" "customAuthorizer" {
+  api_id           = aws_apigatewayv2_api.lambda.id
+  authorizer_payload_format_version= "2.0"
+  authorizer_uri= aws_lambda_function.authorizer.invoke_arn
+  authorizer_type  = "REQUEST"
+  identity_sources = ["$request.header.Authorization"]
+  name             = "ecommerce-custom-authorizer"
+  enable_simple_responses = true
+}

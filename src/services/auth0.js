@@ -52,14 +52,9 @@ module.exports.authenticate = async (params) => {
     throw new Error('invalid token');
   }
   const getSigningKey = util.promisify(client.getSigningKey);
-  return getSigningKey(decoded.header.kid)
-    .then((key) => {
-      const signingKey = key.publicKey || key.rsaPublicKey;
-      return jwt.verify(token, signingKey, jwtOptions);
-    })
-    .then((decodedPayload) => ({
-      principalId: decodedPayload.sub,
-      policyDocument: getPolicyDocument('Allow', params.routeArn),
-      context: { scope: decodedPayload.scope },
-    }));
+  const key = await getSigningKey(decoded.header.kid);
+  const signingKey = key.publicKey || key.rsaPublicKey;
+  const decodedPayload = await jwt.verify(token, signingKey, jwtOptions);
+  console.log(decodedPayload);
+  return true;
 };
