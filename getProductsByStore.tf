@@ -15,7 +15,7 @@ resource "aws_lambda_function" "getProductsByStore" {
   environment {
     variables = {
       PRODUCTS_TABLE = aws_dynamodb_table.products-dynamodb-table.name
-      USER_POOL_ID   = "us-east-1_Bi6FQeFqv"
+      STORES_TABLE   = aws_dynamodb_table.stores-dynamodb-table.name
     }
   }
 }

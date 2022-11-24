@@ -97,6 +97,6 @@ resource "aws_apigatewayv2_route" "createOrder" {
 
   route_key          = "POST /orders"
   target             = "integrations/${aws_apigatewayv2_integration.createOrder.id}"
-  authorizer_id      = aws_apigatewayv2_authorizer.authorizer.id
-  authorization_type = "JWT"
+  # authorizer_id      = aws_apigatewayv2_authorizer.authorizer.id
+  # authorization_type = "JWT"
 }

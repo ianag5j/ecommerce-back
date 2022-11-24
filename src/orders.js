@@ -9,14 +9,14 @@ const docClient = new DynamoDBClient();
 
 module.exports.createOrder = async (event) => {
   try {
-    const accessToken = event.headers.authorization.replace('Bearer ', '');
-    const decodedToken = jwtDecode(accessToken);
+    // const accessToken = event.headers.authorization.replace('Bearer ', '');
+    // const decodedToken = jwtDecode(accessToken);
     const body = JSON.parse(event.body);
     const products = await getProductsByIds(body.cart.map((item) => item.id));
     const totalAmount = getTotalAmount(body.cart, products);
     const Item = {
       Id: { S: v4() },
-      UserId: { S: decodedToken.sub },
+      // UserId: { S: decodedToken.sub },
       Status: { S: 'CREATED' },
       Amount: { S: totalAmount },
       CreatedAt: { S: (new Date()).toISOString() },

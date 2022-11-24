@@ -101,6 +101,13 @@ resource "aws_iam_role_policy" "lambda_policy" {
       {
         Effect = "Allow",
         Action = [
+          "dynamodb:*",
+        ],
+        Resource = "arn:aws:dynamodb:${var.aws_region}:197373923794:table/${aws_dynamodb_table.stores-dynamodb-table.name}*"
+      },
+      {
+        Effect = "Allow",
+        Action = [
           "cognito-idp:ListUsers",
         ],
         Resource = "arn:aws:cognito-idp:${var.aws_region}:197373923794:userpool/us-east-1_Bi6FQeFqv"
