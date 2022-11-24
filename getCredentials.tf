@@ -19,11 +19,22 @@ resource "aws_lambda_function" "getCredentials" {
   }
 }
 
+resource "aws_lambda_permission" "api_gw_get_credentials" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.getCredentials.function_name
+  principal     = "apigateway.amazonaws.com"
+
+  source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
+}
+
 resource "aws_cloudwatch_log_group" "getCredentials" {
   name = "/aws/lambda/${aws_lambda_function.getCredentials.function_name}"
 
   retention_in_days = 30
 }
+
+# ############ API GATEWAY ############
 
 resource "aws_apigatewayv2_integration" "getCredentials" {
   api_id = aws_apigatewayv2_api.lambda.id
@@ -38,15 +49,6 @@ resource "aws_apigatewayv2_route" "getCredentials" {
 
   route_key          = "GET /credentials"
   target             = "integrations/${aws_apigatewayv2_integration.getCredentials.id}"
-  authorizer_id      = aws_apigatewayv2_authorizer.authorizer.id
-  authorization_type = "JWT"
-}
-
-resource "aws_lambda_permission" "api_gw_get_credentials" {
-  statement_id  = "AllowExecutionFromAPIGateway"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.getCredentials.function_name
-  principal     = "apigateway.amazonaws.com"
-
-  source_arn = "${aws_apigatewayv2_api.lambda.execution_arn}/*/*"
+  authorizer_id      = aws_apigatewayv2_authorizer.customAuthorizer.id
+  authorization_type = "CUSTOM"
 }

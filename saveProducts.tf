@@ -49,6 +49,6 @@ resource "aws_apigatewayv2_route" "saveProduct" {
 
   route_key          = "POST /products"
   target             = "integrations/${aws_apigatewayv2_integration.saveProduct.id}"
-  authorizer_id      = aws_apigatewayv2_authorizer.authorizer.id
-  authorization_type = "JWT"
+  authorizer_id      = aws_apigatewayv2_authorizer.customAuthorizer.id
+  authorization_type = "CUSTOM"
 }
