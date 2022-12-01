@@ -10,7 +10,7 @@ resource "aws_dynamodb_table" "orders-dynamodb-table" {
   }
 
   attribute {
-    name = "UserId"
+    name = "StoreId"
     type = "S"
   }
 
@@ -20,8 +20,8 @@ resource "aws_dynamodb_table" "orders-dynamodb-table" {
   }
 
   global_secondary_index {
-    name               = "UserIdIndex"
-    hash_key           = "UserId"
+    name               = "StoreIdIndex"
+    hash_key           = "StoreId"
     write_capacity     = 10
     read_capacity      = 10
     projection_type    = "INCLUDE"
@@ -55,6 +55,7 @@ resource "aws_lambda_function" "createOrder" {
 
   runtime = "nodejs14.x"
   handler = "orders.createOrder"
+  timeout = 5
 
   source_code_hash = data.archive_file.lambda_hello_world.output_base64sha256
 
@@ -63,6 +64,11 @@ resource "aws_lambda_function" "createOrder" {
     variables = {
       ORDERS_TABLE   = aws_dynamodb_table.orders-dynamodb-table.name
       PRODUCTS_TABLE = aws_dynamodb_table.products-dynamodb-table.name
+      CREDENTIALS_TABLE = aws_dynamodb_table.basic-dynamodb-table.name
+      STORES_TABLE   = aws_dynamodb_table.stores-dynamodb-table.name
+      # FRONT_BASE_URL = "http://localhost:3000"
+      FRONT_BASE_URL = "https://ecommerce-front-git-development-iangonzalez-ualacomar.vercel.app"
+      LAMBDA_URL = aws_apigatewayv2_stage.lambda.invoke_url
     }
   }
 }

@@ -1,40 +1,19 @@
 const jwtDecode = require('jwt-decode');
-const {
-  DynamoDBClient, PutItemCommand, UpdateItemCommand, QueryCommand,
-} = require('@aws-sdk/client-dynamodb');
-const { v4 } = require('uuid');
-const { getProductsByIds, getTotalAmount } = require('./services/products');
+const { DynamoDBClient, UpdateItemCommand, QueryCommand } = require('@aws-sdk/client-dynamodb');
+const { createOrder } = require('./services/orders');
 
 const docClient = new DynamoDBClient();
 
 module.exports.createOrder = async (event) => {
   try {
-    // const accessToken = event.headers.authorization.replace('Bearer ', '');
-    // const decodedToken = jwtDecode(accessToken);
-    const body = JSON.parse(event.body);
-    const products = await getProductsByIds(body.cart.map((item) => item.id));
-    const totalAmount = getTotalAmount(body.cart, products);
-    const Item = {
-      Id: { S: v4() },
-      // UserId: { S: decodedToken.sub },
-      Status: { S: 'CREATED' },
-      Amount: { S: totalAmount },
-      CreatedAt: { S: (new Date()).toISOString() },
-      UpdatedAt: { S: (new Date()).toISOString() },
-      // Cart: { L: body.cart.map((item) => ({ M: item })) },
-      // Products: { L: products },
-    };
-    console.log('Item: ', Item);
-    await docClient.send(new PutItemCommand({
-      TableName: process.env.ORDERS_TABLE,
-      Item,
-    }));
+    const { storeName, cart } = JSON.parse(event.body);
+    const order = await createOrder(cart, storeName);
     return {
       statusCode: 201,
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ order: Item }),
+      body: JSON.stringify(order),
     };
   } catch (error) {
     console.log(error);

@@ -2,7 +2,7 @@ const {
   DynamoDBClient, QueryCommand, GetItemCommand, PutItemCommand,
 } = require('@aws-sdk/client-dynamodb');
 const { v4 } = require('uuid');
-const { default: CustomError, ERROR_CODES } = require('../lib/error');
+const { CustomError, ERROR_CODES } = require('../lib/error');
 
 const docClient = new DynamoDBClient();
 
@@ -13,6 +13,10 @@ module.exports.getStoreByName = async (storeName) => {
       Name: { S: storeName },
     },
   }));
+
+  if (!store) {
+    throw new CustomError(ERROR_CODES.STORE_NAME_USED);
+  }
   return store;
 };
 
@@ -26,8 +30,9 @@ module.exports.getStoreByUser = async (userId) => {
     },
     Select: 'ALL_PROJECTED_ATTRIBUTES',
   }));
+
   if (!store) {
-    return null;
+    throw new CustomError(ERROR_CODES.USER_ALREADY_HAS_STORE);
   }
   return {
     Name: store.Name.S,
@@ -36,16 +41,9 @@ module.exports.getStoreByUser = async (userId) => {
 };
 
 module.exports.createStore = async (storeName, userId) => {
-  const [storeByName, storeByUser] = await Promise.all([
+  await Promise.all([
     this.getStoreByName(storeName), this.getStoreByUser(userId),
   ]);
-
-  if (storeByName) {
-    throw new CustomError(ERROR_CODES.STORE_NAME_USED);
-  }
-  if (storeByUser) {
-    throw new CustomError(ERROR_CODES.USER_ALREADY_HAS_STORE);
-  }
 
   const Item = {
     Id: { S: v4() },
