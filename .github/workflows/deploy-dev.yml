@@ -3,6 +3,10 @@ on:
   push:
     branches:
       - "develop"
+
+env:
+  TF_VAR_auth0_domain: ${{ secrets.AUTH0_DOMAIN }}
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -17,7 +21,4 @@ jobs:
       - uses: hashicorp/setup-terraform@v2
       - run: terraform init
       - run: terraform workspace select "dev"
-      - name: set terraform variables
-        run: |
-          export TF_VAR_auth0_domain=${{ secrets.AUTH0_DOMAIN }}
       - run: terraform apply -auto-approve
