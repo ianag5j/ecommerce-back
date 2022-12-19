@@ -28,7 +28,7 @@ resource "aws_s3_bucket" "lambda_bucket" {
 }
 
 resource "aws_s3_bucket_public_access_block" "lambda_bucket" {
-  bucket = aws_s3_bucket.example.id
+  bucket = aws_s3_bucket.lambda_bucket.id
 
   restrict_public_buckets = true
   block_public_acls       = true
@@ -174,6 +174,11 @@ resource "aws_apigatewayv2_stage" "lambda" {
 
   name        = terraform.workspace
   auto_deploy = true
+
+  route_settings {
+    throttling_burst_limit = 50
+    throttling_rate_limit  = 100
+  }
 
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gw.arn
