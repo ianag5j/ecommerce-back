@@ -176,6 +176,7 @@ resource "aws_apigatewayv2_stage" "lambda" {
   auto_deploy = true
 
   route_settings {
+    route_key              = "dev"
     throttling_burst_limit = 50
     throttling_rate_limit  = 100
   }
