@@ -10,6 +10,12 @@ terraform {
     }
   }
 
+  backend "s3" {
+    bucket = "terraform-state-ian"
+    key    = "terraform"
+    region = "us-east-1"
+  }
+
   required_version = "~> 1.0"
 }
 
@@ -174,8 +180,8 @@ resource "aws_apigatewayv2_stage" "lambda" {
       status                  = "$context.status"
       responseLength          = "$context.responseLength"
       integrationErrorMessage = "$context.integrationErrorMessage",
-      authError = "$context.authorizer.error",
-      authProperty = "$context.authorizer.scope",
+      authError               = "$context.authorizer.error",
+      authProperty            = "$context.authorizer.scope",
       }
     )
   }
