@@ -27,6 +27,15 @@ resource "aws_s3_bucket" "lambda_bucket" {
   bucket = "ianag5j-ecommerce-back"
 }
 
+resource "aws_s3_bucket_public_access_block" "lambda_bucket" {
+  bucket = aws_s3_bucket.example.id
+
+  restrict_public_buckets = true
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+}
+
 resource "aws_s3_bucket_acl" "bucket_acl" {
   bucket = aws_s3_bucket.lambda_bucket.id
   acl    = "private"
