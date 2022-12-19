@@ -47,7 +47,7 @@ resource "aws_lambda_function" "createStore" {
   role = aws_iam_role.lambda_exec.arn
   environment {
     variables = {
-      STORES_TABLE   = aws_dynamodb_table.stores-dynamodb-table.name
+      STORES_TABLE = aws_dynamodb_table.stores-dynamodb-table.name
     }
   }
 }
@@ -80,6 +80,6 @@ resource "aws_apigatewayv2_integration" "createStore" {
 resource "aws_apigatewayv2_route" "createStore" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  route_key          = "POST /stores"
-  target             = "integrations/${aws_apigatewayv2_integration.createStore.id}"
+  route_key = "POST /stores"
+  target    = "integrations/${aws_apigatewayv2_integration.createStore.id}"
 }

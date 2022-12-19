@@ -62,13 +62,13 @@ resource "aws_lambda_function" "createOrder" {
   role = aws_iam_role.lambda_exec.arn
   environment {
     variables = {
-      ORDERS_TABLE   = aws_dynamodb_table.orders-dynamodb-table.name
-      PRODUCTS_TABLE = aws_dynamodb_table.products-dynamodb-table.name
+      ORDERS_TABLE      = aws_dynamodb_table.orders-dynamodb-table.name
+      PRODUCTS_TABLE    = aws_dynamodb_table.products-dynamodb-table.name
       CREDENTIALS_TABLE = aws_dynamodb_table.basic-dynamodb-table.name
-      STORES_TABLE   = aws_dynamodb_table.stores-dynamodb-table.name
+      STORES_TABLE      = aws_dynamodb_table.stores-dynamodb-table.name
       # FRONT_BASE_URL = "http://localhost:3000"
       FRONT_BASE_URL = "https://ecommerce-front-git-development-iangonzalez-ualacomar.vercel.app"
-      LAMBDA_URL = aws_apigatewayv2_stage.lambda.invoke_url
+      LAMBDA_URL     = aws_apigatewayv2_stage.lambda.invoke_url
     }
   }
 }
@@ -101,8 +101,8 @@ resource "aws_apigatewayv2_integration" "createOrder" {
 resource "aws_apigatewayv2_route" "createOrder" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  route_key          = "POST /orders"
-  target             = "integrations/${aws_apigatewayv2_integration.createOrder.id}"
+  route_key = "POST /orders"
+  target    = "integrations/${aws_apigatewayv2_integration.createOrder.id}"
   # authorizer_id      = aws_apigatewayv2_authorizer.authorizer.id
   # authorization_type = "JWT"
 }

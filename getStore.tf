@@ -14,7 +14,7 @@ resource "aws_lambda_function" "getStore" {
   role = aws_iam_role.lambda_exec.arn
   environment {
     variables = {
-      STORES_TABLE   = aws_dynamodb_table.stores-dynamodb-table.name
+      STORES_TABLE = aws_dynamodb_table.stores-dynamodb-table.name
     }
   }
 }
@@ -47,8 +47,8 @@ resource "aws_apigatewayv2_integration" "getStore" {
 resource "aws_apigatewayv2_route" "getStore" {
   api_id = aws_apigatewayv2_api.lambda.id
 
-  route_key = "GET /stores"
-  target    = "integrations/${aws_apigatewayv2_integration.getStore.id}"
+  route_key          = "GET /stores"
+  target             = "integrations/${aws_apigatewayv2_integration.getStore.id}"
   authorizer_id      = aws_apigatewayv2_authorizer.customAuthorizer.id
   authorization_type = "CUSTOM"
 }
