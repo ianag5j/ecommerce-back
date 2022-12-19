@@ -175,12 +175,6 @@ resource "aws_apigatewayv2_stage" "lambda" {
   name        = terraform.workspace
   auto_deploy = true
 
-  route_settings {
-    route_key              = "dev"
-    throttling_burst_limit = 50
-    throttling_rate_limit  = 100
-  }
-
   access_log_settings {
     destination_arn = aws_cloudwatch_log_group.api_gw.arn
 
