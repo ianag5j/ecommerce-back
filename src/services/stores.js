@@ -14,9 +14,6 @@ module.exports.getStoreByName = async (storeName) => {
     },
   }));
 
-  if (!store) {
-    throw new CustomError(ERROR_CODES.STORE_NAME_USED);
-  }
   return store;
 };
 
@@ -31,19 +28,21 @@ module.exports.getStoreByUser = async (userId) => {
     Select: 'ALL_PROJECTED_ATTRIBUTES',
   }));
 
-  if (!store) {
-    throw new CustomError(ERROR_CODES.USER_ALREADY_HAS_STORE);
+  if (store) {
+    return {
+      Name: store.Name.S,
+      UserId: store.UserId.S,
+    };
   }
-  return {
-    Name: store.Name.S,
-    UserId: store.UserId.S,
-  };
+  return null;
 };
 
 module.exports.createStore = async (storeName, userId) => {
-  await Promise.all([
+  const [storeByName, storeByUser] = await Promise.all([
     this.getStoreByName(storeName), this.getStoreByUser(userId),
   ]);
+  if (storeByUser) throw new CustomError(ERROR_CODES.USER_ALREADY_HAS_STORE);
+  if (storeByName) throw new CustomError(ERROR_CODES.STORE_NAME_USED);
 
   const Item = {
     Id: { S: v4() },

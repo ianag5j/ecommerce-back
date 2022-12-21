@@ -11,9 +11,10 @@ terraform {
   }
 
   backend "s3" {
-    bucket = "terraform-state-ian"
-    key    = "terraform"
-    region = "us-east-1"
+    bucket         = "terraform-state-ian"
+    dynamodb_table = "tf-lock-table"
+    key            = "terraform"
+    region         = "us-east-1"
   }
 
   required_version = "~> 1.0"
