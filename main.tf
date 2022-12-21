@@ -24,6 +24,8 @@ provider "aws" {
   region = var.aws_region
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_s3_bucket" "lambda_bucket" {
   bucket = "ianag5j-ecommerce-back"
 }
@@ -98,35 +100,35 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Action = [
           "dynamodb:*",
         ],
-        Resource = "arn:aws:dynamodb:us-east-1:197373923794:table/${terraform.workspace}Credentials"
+        Resource = "arn:aws:dynamodb:us-east-1:${data.aws_caller_identity.current.account_id}:table/${terraform.workspace}Credentials"
       },
       {
         Effect = "Allow",
         Action = [
           "dynamodb:*",
         ],
-        Resource = "arn:aws:dynamodb:${var.aws_region}:197373923794:table/${aws_dynamodb_table.products-dynamodb-table.name}*"
+        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${aws_dynamodb_table.products-dynamodb-table.name}*"
       },
       {
         Effect = "Allow",
         Action = [
           "dynamodb:*",
         ],
-        Resource = "arn:aws:dynamodb:${var.aws_region}:197373923794:table/${aws_dynamodb_table.orders-dynamodb-table.name}*"
+        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${aws_dynamodb_table.orders-dynamodb-table.name}*"
       },
       {
         Effect = "Allow",
         Action = [
           "dynamodb:*",
         ],
-        Resource = "arn:aws:dynamodb:${var.aws_region}:197373923794:table/${aws_dynamodb_table.stores-dynamodb-table.name}*"
+        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${aws_dynamodb_table.stores-dynamodb-table.name}*"
       },
       {
         Effect = "Allow",
         Action = [
           "cognito-idp:ListUsers",
         ],
-        Resource = "arn:aws:cognito-idp:${var.aws_region}:197373923794:userpool/us-east-1_Bi6FQeFqv"
+        Resource = "arn:aws:cognito-idp:${var.aws_region}:${data.aws_caller_identity.current.account_id}:userpool/us-east-1_Bi6FQeFqv"
       },
     ]
   })
