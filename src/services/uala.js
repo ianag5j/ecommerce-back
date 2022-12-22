@@ -27,14 +27,16 @@ module.exports.createOrder = async (order, storeName, storeUserId) => {
       clientSecret: credentials.externalClientSecret.S,
       isDev: true,
     });
-    return await UalaBis.createOrder({
+    const data = {
       amount: parseFloat(order.Amount.S),
       // description: `${storeName} Order ${order.Id.S}`,
       description: `${storeName} Order`,
       callbackFail: `${process.env.FRONT_BASE_URL}/fail`,
       callbackSuccess: `${process.env.FRONT_BASE_URL}/success`,
-      notificationUrl: `${process.env.LAMBDA_URL}/webhook/order/${order.Id.S}`,
-    });
+      notificationUrl: `${process.env.LAMBDA_URL}/v2/uala-webhook/${order.Id.S}`,
+    };
+    console.log(data);
+    return await UalaBis.createOrder(data);
   } catch (error) {
     console.log(error);
     throw new CustomError(UALA_ERROR);
