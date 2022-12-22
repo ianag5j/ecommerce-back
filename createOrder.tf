@@ -55,7 +55,7 @@ resource "aws_lambda_function" "createOrder" {
 
   runtime = "nodejs14.x"
   handler = "orders.createOrder"
-  timeout = 5
+  timeout = 15
 
   source_code_hash = data.archive_file.lambda_hello_world.output_base64sha256
 
