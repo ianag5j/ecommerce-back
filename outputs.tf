@@ -29,3 +29,9 @@ output "api_id" {
 
   value = aws_apigatewayv2_api.lambda.id
 }
+
+output "authorizer_id" {
+  description = "Api Gateway Authorizer Id."
+
+  value = aws_apigatewayv2_authorizer.authorizer.id
+}
