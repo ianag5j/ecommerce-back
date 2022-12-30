@@ -33,5 +33,5 @@ output "api_id" {
 output "authorizer_id" {
   description = "Api Gateway Authorizer Id."
 
-  value = aws_apigatewayv2_authorizer.authorizer.id
+  value = aws_apigatewayv2_authorizer.customAuthorizer.id
 }
