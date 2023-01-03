@@ -171,6 +171,9 @@ resource "aws_apigatewayv2_api" "lambda" {
   name          = "${terraform.workspace}_ecommerce"
   protocol_type = "HTTP"
 
+  cors_configuration {
+    allow_origins = ["*"]
+  }
 }
 
 resource "aws_apigatewayv2_stage" "lambda" {
