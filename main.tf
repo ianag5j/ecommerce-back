@@ -170,6 +170,7 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
 resource "aws_apigatewayv2_api" "lambda" {
   name          = "${terraform.workspace}_ecommerce"
   protocol_type = "HTTP"
+
 }
 
 resource "aws_apigatewayv2_stage" "lambda" {
@@ -205,18 +206,6 @@ resource "aws_apigatewayv2_integration" "hello_world" {
   integration_uri    = aws_lambda_function.saveCredentials.invoke_arn
   integration_type   = "AWS_PROXY"
   integration_method = "POST"
-}
-
-resource "aws_apigatewayv2_authorizer" "authorizer" {
-  api_id           = aws_apigatewayv2_api.lambda.id
-  authorizer_type  = "JWT"
-  identity_sources = ["$request.header.Authorization"]
-  name             = "ecommerce-authorizer"
-
-  jwt_configuration {
-    audience = ["34i1j18acnv0hqqsiarlfnjj6k"]
-    issuer   = "https://cognito-idp.us-east-1.amazonaws.com/us-east-1_Bi6FQeFqv"
-  }
 }
 
 resource "aws_apigatewayv2_route" "hello_world" {
