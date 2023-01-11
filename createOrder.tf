@@ -20,12 +20,11 @@ resource "aws_dynamodb_table" "orders-dynamodb-table" {
   }
 
   global_secondary_index {
-    name               = "StoreIdIndex"
-    hash_key           = "StoreId"
-    write_capacity     = 10
-    read_capacity      = 10
-    projection_type    = "INCLUDE"
-    non_key_attributes = ["Id", "Status", "Amount", "ExternalId", "CreatedAt"]
+    name            = "StoreIdIndex"
+    hash_key        = "StoreId"
+    write_capacity  = 10
+    read_capacity   = 10
+    projection_type = "ALL"
   }
 
   global_secondary_index {
