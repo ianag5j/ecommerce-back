@@ -14,7 +14,7 @@ resource "aws_lambda_function" "getCredentials" {
   role = aws_iam_role.lambda_exec.arn
   environment {
     variables = {
-      CREDENTIALS_TABLE = aws_dynamodb_table.basic-dynamodb-table.name
+      CREDENTIALS_TABLE = "${terraform.workspace}Credentials"
     }
   }
 }

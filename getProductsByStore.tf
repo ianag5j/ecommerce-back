@@ -14,8 +14,8 @@ resource "aws_lambda_function" "getProductsByStore" {
   role = aws_iam_role.lambda_exec.arn
   environment {
     variables = {
-      PRODUCTS_TABLE = aws_dynamodb_table.products-dynamodb-table.name
-      STORES_TABLE   = aws_dynamodb_table.stores-dynamodb-table.name
+      PRODUCTS_TABLE = "${terraform.workspace}Products"
+      STORES_TABLE   = "${terraform.workspace}Stores"
     }
   }
 }

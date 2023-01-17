@@ -81,21 +81,21 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Action = [
           "dynamodb:*",
         ],
-        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${aws_dynamodb_table.products-dynamodb-table.name}*"
+        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${terraform.workspace}Products"
       },
       {
         Effect = "Allow",
         Action = [
           "dynamodb:*",
         ],
-        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${aws_dynamodb_table.orders-dynamodb-table.name}*"
+        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${terraform.workspace}Orders"
       },
       {
         Effect = "Allow",
         Action = [
           "dynamodb:*",
         ],
-        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${aws_dynamodb_table.stores-dynamodb-table.name}*"
+        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${terraform.workspace}Stores"
       },
       {
         Effect = "Allow",

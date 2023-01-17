@@ -14,7 +14,7 @@ resource "aws_lambda_function" "getProducts" {
   role = aws_iam_role.lambda_exec.arn
   environment {
     variables = {
-      PRODUCTS_TABLE = aws_dynamodb_table.products-dynamodb-table.name
+      PRODUCTS_TABLE = "${terraform.workspace}Products"
     }
   }
 }

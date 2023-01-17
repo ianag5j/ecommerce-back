@@ -14,7 +14,7 @@ resource "aws_lambda_function" "getStore" {
   role = aws_iam_role.lambda_exec.arn
   environment {
     variables = {
-      STORES_TABLE = aws_dynamodb_table.stores-dynamodb-table.name
+      STORES_TABLE = "${terraform.workspace}Stores"
     }
   }
 }
