@@ -180,15 +180,6 @@ resource "aws_apigatewayv2_stage" "lambda" {
   }
 }
 
-resource "aws_apigatewayv2_route" "hello_world" {
-  api_id = aws_apigatewayv2_api.lambda.id
-
-  route_key          = "POST /credentials"
-  target             = "integrations/${aws_apigatewayv2_integration.hello_world.id}"
-  authorizer_id      = aws_apigatewayv2_authorizer.customAuthorizer.id
-  authorization_type = "CUSTOM"
-}
-
 resource "aws_cloudwatch_log_group" "api_gw" {
   name = "/aws/api_gw/${aws_apigatewayv2_api.lambda.name}"
 
