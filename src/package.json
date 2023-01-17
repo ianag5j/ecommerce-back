@@ -1,0 +1,27 @@
+{
+  "name": "ecommerce-back",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "lambda-local --timeout 300 --lambda-path authorizer.js --event-path ../test/authEvent.json"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-cognito-identity-provider": "^3.211.0",
+    "@aws-sdk/client-dynamodb": "^3.172.0",
+    "aws-sdk": "^2.1216.0",
+    "jsonwebtoken": "^8.5.1",
+    "jwks-rsa": "^3.0.0",
+    "jwt-decode": "^3.1.2",
+    "ualabis-nodejs": "^1.0.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.23.1",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "lambda-local": "^2.0.3"
+  }
+}
