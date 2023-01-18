@@ -81,28 +81,30 @@ resource "aws_iam_role_policy" "lambda_policy" {
         Action = [
           "dynamodb:*",
         ],
-        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${terraform.workspace}Products"
+        Resource = [
+          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${terraform.workspace}Products",
+          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${terraform.workspace}Products/index/*"
+        ]
       },
       {
         Effect = "Allow",
         Action = [
           "dynamodb:*",
         ],
-        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${terraform.workspace}Orders"
+        Resource = [
+          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${terraform.workspace}Orders",
+          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${terraform.workspace}Orders/index/*",
+        ]
       },
       {
         Effect = "Allow",
         Action = [
           "dynamodb:*",
         ],
-        Resource = "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${terraform.workspace}Stores"
-      },
-      {
-        Effect = "Allow",
-        Action = [
-          "cognito-idp:ListUsers",
-        ],
-        Resource = "arn:aws:cognito-idp:${var.aws_region}:${data.aws_caller_identity.current.account_id}:userpool/us-east-1_Bi6FQeFqv"
+        Resource = [
+          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${terraform.workspace}Stores",
+          "arn:aws:dynamodb:${var.aws_region}:${data.aws_caller_identity.current.account_id}:table/${terraform.workspace}Stores/index/*",
+        ]
       },
     ]
   })
